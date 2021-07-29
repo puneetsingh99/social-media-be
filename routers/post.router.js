@@ -8,6 +8,7 @@ const {
   updatePost,
   deletePost,
   likePost,
+  commentPost,
 } = require("../controllers/post.controller");
 
 const { verifyAuth } = require("../middlewares/verify-auth.middleware");
@@ -22,5 +23,6 @@ postRouter.param("postId", postIdCheck);
 
 postRouter.route("/:postId").get(getPost).post(updatePost).delete(deletePost);
 postRouter.route("/:postId/like").post(likePost);
+postRouter.route("/:postId/comment").post(commentPost);
 
 module.exports = { postRouter };

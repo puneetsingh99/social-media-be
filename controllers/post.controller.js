@@ -144,6 +144,33 @@ const likePost = async (req, res) => {
   }
 };
 
+const commentPost = async (req, res) => {
+  try {
+    const postId = req.postId;
+    const comment = req.body;
+
+    let post = await Post.findById({ _id: postId });
+
+    const user = await User.findOne({ _id: post.author });
+
+    user.notifications.unshift({
+      from: comment.madeBy,
+      type: "comment",
+      post,
+    });
+
+    post.comments.unshift(comment);
+    await post.save();
+    await user.save();
+
+    return successResponse(res, {
+      message: "comment added to the post",
+    });
+  } catch (error) {
+    return errorResponse(res, "could not add the comment", error);
+  }
+};
+
 module.exports = {
   getAllPosts,
   deleteAllPosts,
@@ -153,4 +180,5 @@ module.exports = {
   updatePost,
   deletePost,
   likePost,
+  commentPost,
 };
