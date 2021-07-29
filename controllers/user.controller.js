@@ -57,10 +57,6 @@ const updateUser = async (req, res) => {
   try {
     const updateData = req.body;
 
-    if (updateData.userCreatedQuiz) {
-      await User.findOneAndUpdate({ _id: req.userId });
-    }
-
     let userToBeUpdated = await User.findOne({ _id: req.userId });
     userToBeUpdated = extend(userToBeUpdated, updateData);
     const updatedUser = await userToBeUpdated.save();
@@ -94,7 +90,7 @@ const addFollower = async (req, res) => {
 
     if (userId === followerId) {
       return errorResponse(res, "Cannot follow this user", {
-        message: "Trying to follow yourself",
+        message: "trying to follow yourself",
       });
     }
 

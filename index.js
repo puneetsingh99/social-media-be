@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const { initDbConn } = require("./db/db");
 const { userRouter } = require("./routers/user.router");
+const { postRouter } = require("./routers/post.router");
 const { routeNotFound } = require("./middlewares/route-not-found.middleware");
 const { errorHandler } = require("./middlewares/error-handler.middleware");
 const { login } = require("./controllers/auth.controller");
@@ -17,6 +18,7 @@ app.use(bodyParser.json());
 initDbConn();
 
 app.use("/user", userRouter);
+app.use("/post", postRouter);
 app.use("/login", loginHandler, login);
 
 // NOTE: Do not move
