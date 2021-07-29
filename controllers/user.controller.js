@@ -156,7 +156,6 @@ const updateProfilePic = async (req, res) => {
       file.tempFilePath,
       { resource_type: "auto" },
       (error, result) => {
-        console.log(result);
         if (error) {
           return errorResponse(res, "could not update the profile pic", error);
         }
@@ -209,7 +208,6 @@ const updateCoverPic = async (req, res) => {
       file.tempFilePath,
       { resource_type: "auto" },
       (error, result) => {
-        console.log(result);
         if (error) {
           return errorResponse(res, "could not update the cover pic", error);
         }
