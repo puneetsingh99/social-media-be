@@ -29,7 +29,6 @@ const deleteAllPosts = async (req, res) => {
 const addPost = async (req, res) => {
   try {
     const post = req.body;
-    console.log("post", post);
     const newPost = new Post(post);
     const savedPost = await newPost.save();
 
