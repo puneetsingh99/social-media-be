@@ -1,6 +1,13 @@
 const { User } = require("../models/user.model");
+const cloudinary = require("cloudinary").v2;
 const { successResponse, errorResponse } = require("../utils");
 const { extend } = require("lodash");
+
+cloudinary.config({
+  cloud_name: process.env["CLOUD_NAME"],
+  api_key: process.env["API_KEY"],
+  api_secret: process.env["API_SECRET"],
+});
 
 const getAllUser = async (req, res) => {
   try {
@@ -123,7 +130,112 @@ const addFollower = async (req, res) => {
   }
 };
 
-// /:userId/notification
+const updateProfilePic = async (req, res) => {
+  try {
+    const file = req.files.profilePic;
+
+    if (!file) {
+      return errorResponse(res, "could not update the profile pic", {
+        message: "file not found",
+      });
+    }
+
+    const userId = req.userId;
+    let profilePic = "";
+
+    const fileType = file.mimetype.split("/")[0];
+    const allowedFileTypes = ["image"];
+
+    if (!allowedFileTypes.includes(fileType)) {
+      return errorResponse(res, "could not update profile pic", {
+        message: "invalid file type",
+      });
+    }
+
+    await cloudinary.uploader.upload(
+      file.tempFilePath,
+      { resource_type: "auto" },
+      (error, result) => {
+        console.log(result);
+        if (error) {
+          return errorResponse(res, "could not update the profile pic", error);
+        }
+
+        if (fileType === "image") {
+          profilePic = result.secure_url;
+        }
+      }
+    );
+
+    const user = await User.findOne({ _id: userId });
+
+    user.profilePic = profilePic;
+
+    const updatedUser = await user.save();
+    const { _id, username } = updatedUser;
+
+    return successResponse(res, {
+      message: "Profile pic updated successfully",
+      updatedUser: { _id, username, profilePic: updatedUser.profilePic },
+    });
+  } catch (error) {
+    return errorResponse(res, "Could not update the profile picture", error);
+  }
+};
+
+const updateCoverPic = async (req, res) => {
+  try {
+    const file = req.files.coverPic;
+
+    if (!file) {
+      return errorResponse(res, "could not update the cover pic", {
+        message: "file not found",
+      });
+    }
+
+    const userId = req.userId;
+    let coverPic = "";
+
+    const fileType = file.mimetype.split("/")[0];
+    const allowedFileTypes = ["image"];
+
+    if (!allowedFileTypes.includes(fileType)) {
+      return errorResponse(res, "could not update cover pic", {
+        message: "invalid file type",
+      });
+    }
+
+    await cloudinary.uploader.upload(
+      file.tempFilePath,
+      { resource_type: "auto" },
+      (error, result) => {
+        console.log(result);
+        if (error) {
+          return errorResponse(res, "could not update the cover pic", error);
+        }
+
+        if (fileType === "image") {
+          coverPic = result.secure_url;
+        }
+      }
+    );
+
+    const user = await User.findOne({ _id: userId });
+
+    user.coverPic = coverPic;
+
+    const updatedUser = await user.save();
+    const { _id, username } = updatedUser;
+
+    return successResponse(res, {
+      message: "cover pic updated successfully",
+      updatedUser: { _id, username, coverPic: updatedUser.coverPic },
+    });
+  } catch (error) {
+    return errorResponse(res, "Could not update the cover picture", error);
+  }
+};
+
 const addNotification = async (req, res) => {
   try {
     const userId = req.userId;
@@ -148,4 +260,6 @@ module.exports = {
   deleteUser,
   addFollower,
   addNotification,
+  updateProfilePic,
+  updateCoverPic,
 };

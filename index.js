@@ -1,4 +1,5 @@
 const express = require("express");
+const fileupload = require("express-fileupload");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const { initDbConn } = require("./db/db");
@@ -14,6 +15,11 @@ const PORT = 5000;
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(
+  fileupload({
+    useTempFiles: true,
+  })
+);
 
 initDbConn();
 

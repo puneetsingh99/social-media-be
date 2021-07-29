@@ -45,6 +45,9 @@ const PostSchema = new Schema(
     image: {
       type: String,
     },
+    video: {
+      type: String,
+    },
     likes: [LikeSchema],
     comments: [CommentSchema],
   },

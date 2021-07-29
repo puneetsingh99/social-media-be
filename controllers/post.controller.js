@@ -1,7 +1,14 @@
 const { Post } = require("../models/post.model");
 const { User } = require("../models/user.model");
+const cloudinary = require("cloudinary").v2;
 const { successResponse, errorResponse } = require("../utils");
 const { extend } = require("lodash");
+
+cloudinary.config({
+  cloud_name: process.env["CLOUD_NAME"],
+  api_key: process.env["API_KEY"],
+  api_secret: process.env["API_SECRET"],
+});
 
 const getAllPosts = async (req, res) => {
   try {
@@ -29,7 +36,53 @@ const deleteAllPosts = async (req, res) => {
 const addPost = async (req, res) => {
   try {
     const post = req.body;
+    const file = req.files.photoOrVideo;
+
+    let image = "";
+    let video = "";
+
+    if (file) {
+      const fileType = file.mimetype.split("/")[0];
+      const allowedFileTypes = ["image", "video"];
+
+      if (!allowedFileTypes.includes(fileType)) {
+        return errorResponse(res, "could not add the post", {
+          message: "invalid file type",
+        });
+      }
+
+      await cloudinary.uploader.upload(
+        file.tempFilePath,
+        { resource_type: "auto" },
+        (error, result) => {
+          console.log(error, result);
+          if (error) {
+            return errorResponse(res, "could not add the post", error);
+          }
+
+          if (fileType === "image") {
+            image = result.secure_url;
+          }
+
+          if (fileType === "video") {
+            video = result.secure_url;
+          }
+        }
+      );
+    }
+
     const newPost = new Post(post);
+
+    if (image) {
+      newPost.image = image;
+      file.tempFilePath = undefined;
+    }
+
+    if (video) {
+      newPost.video = video;
+      file.tempFilePath = undefined;
+    }
+
     const savedPost = await newPost.save();
 
     return successResponse(res, {
