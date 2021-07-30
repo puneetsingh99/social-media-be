@@ -12,7 +12,9 @@ cloudinary.config({
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find({}).select("-__v -password");
+    const posts = await Post.find({})
+      .populate("author", "_id username firstname lastname")
+      .select("-__v -password");
 
     return successResponse(res, {
       message: "Posts retrieved successfully",
@@ -55,7 +57,6 @@ const addPost = async (req, res) => {
         file.tempFilePath,
         { resource_type: "auto" },
         (error, result) => {
-          console.log(error, result);
           if (error) {
             return errorResponse(res, "could not add the post", error);
           }
