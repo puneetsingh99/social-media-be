@@ -39,7 +39,7 @@ const signup = async (req, res) => {
 
     if (!newUser.profilePic) {
       newUser.profilePic =
-        "https://res.cloudinary.com/dxeyjgsl5/image/upload/v1627487088/social-media/profilePic_zpkqui.png";
+        "https://res.cloudinary.com/dxeyjgsl5/image/upload/v1627751597/social-media/default_profile_xuyimt.png";
     }
 
     if (!newUser.coverPic) {
