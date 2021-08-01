@@ -28,8 +28,7 @@ const loginHandler = async (req, res, next) => {
         .status(400)
         .json({
           success: false,
-          message: "could not login",
-          error: "Incorrect password",
+          message: "Incorrect password",
         });
     }
     req.login = "successful";
@@ -40,7 +39,7 @@ const loginHandler = async (req, res, next) => {
     return res.status(401).json({
       success: false,
       message: "Something went wrong",
-      error: error.message,
+      errorMessage: error.message,
     });
   }
 };
