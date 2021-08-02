@@ -24,12 +24,10 @@ const loginHandler = async (req, res, next) => {
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Incorrect password",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Incorrect password",
+      });
     }
     req.login = "successful";
     req.userId = user._id;

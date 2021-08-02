@@ -26,10 +26,25 @@ const signup = async (req, res) => {
   try {
     const user = req.body;
 
-    const userAlreadyExists = await User.findOne({ username: user.username });
+    const emailAlreadyExists = await User.findOne({
+      email: user.email,
+    });
 
-    if (userAlreadyExists) {  
-      return res.json({ success: false, message: "User already exists" });
+    if (emailAlreadyExists) {
+      return res.status(400).json({
+        success: false,
+        message: "Account with this email already exists",
+      });
+    }
+
+    const usernameAlreadyExists = await User.findOne({
+      username: user.username,
+    });
+
+    if (usernameAlreadyExists) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Username already taken" });
     }
 
     const newUser = new User(user);
