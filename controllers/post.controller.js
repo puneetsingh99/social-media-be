@@ -12,9 +12,10 @@ cloudinary.config({
 
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find({})
-      .populate("author", "_id username firstname lastname profilePic")
-      .select("-__v -password");
+    const posts = await Post.find({}).populate(
+      "author",
+      "-__v, -password -notifications -email"
+    );
 
     return successResponse(res, {
       message: "Posts retrieved successfully",

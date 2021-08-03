@@ -253,7 +253,10 @@ const addNotification = async (req, res) => {
 const getPostsByUser = async (req, res) => {
   try {
     const userId = req.userId;
-    const posts = await Post.find({ author: userId });
+    const posts = await Post.find({ author: userId }).populate(
+      "author",
+      "-__v, -password -notifications -email"
+    );
     return successResponse(res, {
       message: "Posts retrieved successfully",
       posts,
