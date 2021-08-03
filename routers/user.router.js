@@ -10,6 +10,7 @@ const {
   addNotification,
   updateProfilePic,
   updateCoverPic,
+  getPostsByUser,
 } = require("../controllers/user.controller");
 
 const { signup } = require("../controllers/auth.controller");
@@ -24,6 +25,7 @@ userRouter.use(verifyAuth);
 userRouter.param("userId", userIdCheck);
 
 userRouter.route("/:userId").get(getUser).post(updateUser).delete(deleteUser);
+userRouter.route("/:userId/posts").get(getPostsByUser);
 userRouter.route("/:userId/profilepic").post(updateProfilePic);
 userRouter.route("/:userId/coverpic").post(updateCoverPic);
 userRouter.route("/:userId/follow").post(addFollower);

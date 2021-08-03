@@ -1,4 +1,5 @@
 const { User } = require("../models/user.model");
+const { Post } = require("../models/post.model");
 const cloudinary = require("cloudinary").v2;
 const { successResponse, errorResponse } = require("../utils");
 const { extend } = require("lodash");
@@ -249,6 +250,19 @@ const addNotification = async (req, res) => {
   }
 };
 
+const getPostsByUser = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const posts = await Post.find({ author: userId });
+    return successResponse(res, {
+      message: "Posts retrieved successfully",
+      posts,
+    });
+  } catch (error) {
+    return errorResponse(res, "Could not add notification", error);
+  }
+};
+
 module.exports = {
   getAllUser,
   deleteAllUser,
@@ -260,4 +274,5 @@ module.exports = {
   addNotification,
   updateProfilePic,
   updateCoverPic,
+  getPostsByUser,
 };
