@@ -12,7 +12,7 @@ cloudinary.config({
 
 const getAllUser = async (req, res) => {
   try {
-    const users = await User.find({}).select("-__v -password");
+    const users = await User.find({}).select("-__v -password -email");
 
     return successResponse(res, {
       message: "Users retrieved successfully",
@@ -91,40 +91,71 @@ const deleteUser = async (req, res) => {
   }
 };
 
-const addFollower = async (req, res) => {
+const updateFollowers = async (req, res) => {
   try {
-    const { followerId } = req.body;
+    const { loggedInUserId } = req.body;
     const userId = req.userId;
 
-    if (userId === followerId) {
-      return errorResponse(res, "Cannot follow this user", {
-        message: "trying to follow yourself",
+    if (userId === loggedInUserId) {
+      return errorResponse(res, "cannot follow this user", {
+        message: "cannot follow yourself",
       });
     }
 
-    const user = await User.findOne({ _id: userId });
+    let user = await User.findOne({ _id: userId });
+    let loggedInUser = await User.findOne({ _id: loggedInUserId });
 
-    const alreadyAFollower = user.followers.find(
-      (follower) => follower._id === followerId
+    const alreadyFollows = user.followers.find(
+      (user) => String(user._id) === loggedInUserId
     );
 
-    if (alreadyAFollower) {
-      return errorResponse(res, "Could not add the follower", {
-        message: "You are already following this person",
+    if (alreadyFollows) {
+      user.followers = user.followers.filter(
+        (user) => String(user._id) !== loggedInUserId
+      );
+      loggedInUser.following = loggedInUser.following.filter(
+        (user) => String(user._id) !== userId
+      );
+
+      const updatedUser = await user.save();
+      updatedUser.__v = undefined;
+      updatedUser.email = undefined;
+      updatedUser.password = undefined;
+      updatedUser.notifications = undefined;
+
+      const updatedLoggedInUser = await loggedInUser.save();
+      updatedLoggedInUser.__v = undefined;
+      updatedLoggedInUser.email = undefined;
+      updatedLoggedInUser.password = undefined;
+      updatedLoggedInUser.notifications = undefined;
+
+      return successResponse(res, {
+        message: "user unfollowed",
+        updatedLoggedInUser,
+        updatedUser,
       });
     }
 
-    user.followers.unshift(followerId);
-    user.notifications.unshift({ from: followerId, type: "follow" });
+    user.followers.unshift(loggedInUserId);
+    user.notifications.unshift({ from: loggedInUserId, type: "follow" });
+    loggedInUser.following.unshift(userId);
 
-    await user.save();
+    const updatedUser = await user.save();
+    updatedUser.__v = undefined;
+    updatedUser.email = undefined;
+    updatedUser.password = undefined;
+    updateUser.notifications = undefined;
 
-    const followingUser = await User.findOne({ _id: followerId });
-    followingUser.following.unshift(userId);
-    await followingUser.save();
+    const updatedLoggedInUser = await loggedInUser.save();
+    updatedLoggedInUser.__v = undefined;
+    updatedLoggedInUser.email = undefined;
+    updatedLoggedInUser.password = undefined;
+    updatedLoggedInUser.notifications = undefined;
 
     return successResponse(res, {
       message: "follower added successfully",
+      updatedLoggedInUser,
+      updatedUser,
     });
   } catch (error) {
     return errorResponse(res, "Could not add the follower", error);
@@ -273,7 +304,7 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
-  addFollower,
+  updateFollowers,
   addNotification,
   updateProfilePic,
   updateCoverPic,

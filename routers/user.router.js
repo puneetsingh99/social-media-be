@@ -6,7 +6,7 @@ const {
   getUser,
   updateUser,
   deleteUser,
-  addFollower,
+  updateFollowers,
   addNotification,
   updateProfilePic,
   updateCoverPic,
@@ -28,7 +28,7 @@ userRouter.route("/:userId").get(getUser).post(updateUser).delete(deleteUser);
 userRouter.route("/:userId/posts").get(getPostsByUser);
 userRouter.route("/:userId/profilepic").post(updateProfilePic);
 userRouter.route("/:userId/coverpic").post(updateCoverPic);
-userRouter.route("/:userId/follow").post(addFollower);
+userRouter.route("/:userId/follow").post(updateFollowers);
 userRouter.route("/:userId/notification").post(addNotification);
 
 module.exports = { userRouter };
