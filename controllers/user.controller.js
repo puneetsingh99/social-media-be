@@ -121,13 +121,11 @@ const updateFollowers = async (req, res) => {
       updatedUser.__v = undefined;
       updatedUser.email = undefined;
       updatedUser.password = undefined;
-      updatedUser.notifications = undefined;
 
       const updatedLoggedInUser = await loggedInUser.save();
       updatedLoggedInUser.__v = undefined;
       updatedLoggedInUser.email = undefined;
       updatedLoggedInUser.password = undefined;
-      updatedLoggedInUser.notifications = undefined;
 
       return successResponse(res, {
         message: "user unfollowed",
@@ -144,13 +142,11 @@ const updateFollowers = async (req, res) => {
     updatedUser.__v = undefined;
     updatedUser.email = undefined;
     updatedUser.password = undefined;
-    updateUser.notifications = undefined;
 
     const updatedLoggedInUser = await loggedInUser.save();
     updatedLoggedInUser.__v = undefined;
     updatedLoggedInUser.email = undefined;
     updatedLoggedInUser.password = undefined;
-    updatedLoggedInUser.notifications = undefined;
 
     return successResponse(res, {
       message: "follower added successfully",

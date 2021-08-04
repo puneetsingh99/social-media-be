@@ -1,20 +1,25 @@
 const { Schema, model } = require("mongoose");
 
-const notification = {
-  type: {
-    type: String,
-    trim: true,
-    required: [true, "notification type is mandatory"],
+const notification = Schema(
+  {
+    type: {
+      type: String,
+      trim: true,
+      required: [true, "notification type is mandatory"],
+    },
+    from: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    post: {
+      type: Schema.Types.ObjectId,
+      ref: "Post",
+    },
   },
-  from: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-  },
-  post: {
-    type: Schema.Types.ObjectId,
-    ref: "Post",
-  },
-};
+  {
+    timestamps: true,
+  }
+);
 
 const UserSchema = Schema(
   {
