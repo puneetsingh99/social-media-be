@@ -39,7 +39,7 @@ const userIdCheck = async (req, res, next, userId) => {
     const user = await User.findOne({ _id: userId })
       .populate(
         "followers following notifications.from",
-        "_id username firstname lastname"
+        "_id username firstname lastname profilePic"
       )
       .select("-password  -__v");
 
@@ -110,6 +110,7 @@ const updateFollowers = async (req, res) => {
     );
 
     if (alreadyFollows) {
+      console.log(alreadyFollows);
       user.followers = user.followers.filter(
         (user) => String(user._id) !== loggedInUserId
       );
@@ -117,12 +118,24 @@ const updateFollowers = async (req, res) => {
         (user) => String(user._id) !== userId
       );
 
-      const updatedUser = await user.save();
+      let updatedUser = await user.save();
+      updatedUser = await updatedUser
+        .populate(
+          "followers following notifications.from",
+          "_id username firstname lastname profilePic"
+        )
+        .execPopulate();
       updatedUser.__v = undefined;
       updatedUser.email = undefined;
       updatedUser.password = undefined;
 
-      const updatedLoggedInUser = await loggedInUser.save();
+      let updatedLoggedInUser = await loggedInUser.save();
+      updatedLoggedInUser = await updatedLoggedInUser
+        .populate(
+          "followers following notifications.from",
+          "_id username firstname lastname profilePic"
+        )
+        .execPopulate();
       updatedLoggedInUser.__v = undefined;
       updatedLoggedInUser.email = undefined;
       updatedLoggedInUser.password = undefined;
@@ -138,12 +151,24 @@ const updateFollowers = async (req, res) => {
     user.notifications.unshift({ from: loggedInUserId, type: "follow" });
     loggedInUser.following.unshift(userId);
 
-    const updatedUser = await user.save();
+    let updatedUser = await user.save();
+    updatedUser = await updatedUser
+      .populate(
+        "followers following notifications.from",
+        "_id username firstname lastname profilePic"
+      )
+      .execPopulate();
     updatedUser.__v = undefined;
     updatedUser.email = undefined;
     updatedUser.password = undefined;
 
-    const updatedLoggedInUser = await loggedInUser.save();
+    let updatedLoggedInUser = await loggedInUser.save();
+    updatedLoggedInUser = await updatedLoggedInUser
+      .populate(
+        "followers following notifications.from",
+        "_id username firstname lastname profilePic"
+      )
+      .execPopulate();
     updatedLoggedInUser.__v = undefined;
     updatedLoggedInUser.email = undefined;
     updatedLoggedInUser.password = undefined;
