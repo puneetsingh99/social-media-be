@@ -110,7 +110,6 @@ const updateFollowers = async (req, res) => {
     );
 
     if (alreadyFollows) {
-      console.log(alreadyFollows);
       user.followers = user.followers.filter(
         (user) => String(user._id) !== loggedInUserId
       );
