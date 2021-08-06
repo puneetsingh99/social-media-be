@@ -39,7 +39,7 @@ const userIdCheck = async (req, res, next, userId) => {
     const user = await User.findOne({ _id: userId })
       .populate(
         "followers following notifications.from",
-        "_id username firstname lastname profilePic"
+        "_id username firstname lastname profilePic followers following"
       )
       .select("-password  -__v");
 
@@ -121,7 +121,7 @@ const updateFollowers = async (req, res) => {
       updatedUser = await updatedUser
         .populate(
           "followers following notifications.from",
-          "_id username firstname lastname profilePic"
+          "_id username firstname lastname profilePic followers following"
         )
         .execPopulate();
       updatedUser.__v = undefined;
@@ -132,7 +132,7 @@ const updateFollowers = async (req, res) => {
       updatedLoggedInUser = await updatedLoggedInUser
         .populate(
           "followers following notifications.from",
-          "_id username firstname lastname profilePic"
+          "_id username firstname lastname profilePic followers following"
         )
         .execPopulate();
       updatedLoggedInUser.__v = undefined;
@@ -154,7 +154,7 @@ const updateFollowers = async (req, res) => {
     updatedUser = await updatedUser
       .populate(
         "followers following notifications.from",
-        "_id username firstname lastname profilePic"
+        "_id username firstname lastname profilePic followers following"
       )
       .execPopulate();
     updatedUser.__v = undefined;
@@ -165,7 +165,7 @@ const updateFollowers = async (req, res) => {
     updatedLoggedInUser = await updatedLoggedInUser
       .populate(
         "followers following notifications.from",
-        "_id username firstname lastname profilePic"
+        "_id username firstname lastname profilePic followers following"
       )
       .execPopulate();
     updatedLoggedInUser.__v = undefined;
