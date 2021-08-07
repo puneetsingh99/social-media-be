@@ -64,9 +64,66 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const updateData = req.body;
+    let newProfilePic = null;
+    let newCoverPic = null;
+    newProfilePic = req.files.newProfilePic;
+    newCoverPic = req.files.newCoverPic;
 
     let userToBeUpdated = await User.findOne({ _id: req.userId });
     userToBeUpdated = extend(userToBeUpdated, updateData);
+
+    if (newProfilePic) {
+      let profilePic = "";
+      const fileType = newProfilePic.mimetype.split("/")[0];
+      const allowedFileTypes = ["image"];
+      if (!allowedFileTypes.includes(fileType)) {
+        return errorResponse(res, "could not update profile pic", {
+          message: "invalid file type",
+        });
+      }
+      await cloudinary.uploader.upload(
+        newProfilePic.tempFilePath,
+        { resource_type: "auto" },
+        (error, result) => {
+          if (error) {
+            return errorResponse(
+              res,
+              "could not update the profile pic",
+              error
+            );
+          }
+          if (fileType === "image") {
+            profilePic = result.secure_url;
+          }
+        }
+      );
+      userToBeUpdated.profilePic = profilePic;
+    }
+
+    if (newCoverPic) {
+      let coverPic = "";
+      const fileType = newCoverPic.mimetype.split("/")[0];
+      const allowedFileTypes = ["image"];
+      if (!allowedFileTypes.includes(fileType)) {
+        return errorResponse(res, "could not update cover pic", {
+          message: "invalid file type",
+        });
+      }
+      await cloudinary.uploader.upload(
+        newCoverPic.tempFilePath,
+        { resource_type: "auto" },
+        (error, result) => {
+          if (error) {
+            return errorResponse(res, "could not update the cover pic", error);
+          }
+          if (fileType === "image") {
+            coverPic = result.secure_url;
+          }
+        }
+      );
+      userToBeUpdated.coverPic = coverPic;
+    }
+
     const updatedUser = await userToBeUpdated.save();
     updatedUser.__v = undefined;
     updatedUser.password = undefined;
