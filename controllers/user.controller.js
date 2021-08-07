@@ -124,9 +124,16 @@ const updateUser = async (req, res) => {
       userToBeUpdated.coverPic = coverPic;
     }
 
-    const updatedUser = await userToBeUpdated.save();
+    let updatedUser = await userToBeUpdated.save();
+    updatedUser = await updatedUser
+      .populate(
+        "followers following notifications.from",
+        "_id username firstname lastname profilePic followers following"
+      )
+      .execPopulate();
     updatedUser.__v = undefined;
     updatedUser.password = undefined;
+    updatedUser.email = undefined;
 
     return successResponse(res, {
       message: "User updated successfully",
