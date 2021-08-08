@@ -39,7 +39,7 @@ const userIdCheck = async (req, res, next, userId) => {
     const user = await User.findOne({ _id: userId })
       .populate(
         "followers following notifications.from",
-        "_id username firstname lastname profilePic followers following"
+        "_id username firstname lastname profilePic followers following bio"
       )
       .select("-password  -__v");
 
@@ -130,7 +130,7 @@ const updateUser = async (req, res) => {
     updatedUser = await updatedUser
       .populate(
         "followers following notifications.from",
-        "_id username firstname lastname profilePic followers following"
+        "_id username firstname lastname profilePic followers following bio"
       )
       .execPopulate();
     updatedUser.__v = undefined;
@@ -187,7 +187,7 @@ const updateFollowers = async (req, res) => {
       updatedUser = await updatedUser
         .populate(
           "followers following notifications.from",
-          "_id username firstname lastname profilePic followers following"
+          "_id username firstname lastname profilePic followers following bio"
         )
         .execPopulate();
       updatedUser.__v = undefined;
@@ -198,7 +198,7 @@ const updateFollowers = async (req, res) => {
       updatedLoggedInUser = await updatedLoggedInUser
         .populate(
           "followers following notifications.from",
-          "_id username firstname lastname profilePic followers following"
+          "_id username firstname lastname profilePic followers following bio"
         )
         .execPopulate();
       updatedLoggedInUser.__v = undefined;
@@ -220,7 +220,7 @@ const updateFollowers = async (req, res) => {
     updatedUser = await updatedUser
       .populate(
         "followers following notifications.from",
-        "_id username firstname lastname profilePic followers following"
+        "_id username firstname lastname profilePic followers following bio"
       )
       .execPopulate();
     updatedUser.__v = undefined;
@@ -231,7 +231,7 @@ const updateFollowers = async (req, res) => {
     updatedLoggedInUser = await updatedLoggedInUser
       .populate(
         "followers following notifications.from",
-        "_id username firstname lastname profilePic followers following"
+        "_id username firstname lastname profilePic followers following bio"
       )
       .execPopulate();
     updatedLoggedInUser.__v = undefined;
