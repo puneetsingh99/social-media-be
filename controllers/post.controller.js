@@ -88,7 +88,11 @@ const addPost = async (req, res) => {
       file.tempFilePath = undefined;
     }
 
-    const savedPost = await newPost.save();
+    let savedPost = await newPost.save();
+
+    savedPost = await savedPost
+      .populate("author", "-email -password -__v")
+      .execPopulate();
 
     return successResponse(res, {
       message: "post added successfully",
