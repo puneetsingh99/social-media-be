@@ -66,8 +66,10 @@ const updateUser = async (req, res) => {
     const updateData = req.body;
     let newProfilePic = null;
     let newCoverPic = null;
-    newProfilePic = req.files.newProfilePic;
-    newCoverPic = req.files.newCoverPic;
+    if (req.files) {
+      newProfilePic = req.files.newProfilePic;
+      newCoverPic = req.files.newCoverPic;
+    }
 
     let userToBeUpdated = await User.findOne({ _id: req.userId });
     userToBeUpdated = extend(userToBeUpdated, updateData);
