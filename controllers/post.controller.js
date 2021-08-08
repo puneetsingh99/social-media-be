@@ -39,7 +39,10 @@ const deleteAllPosts = async (req, res) => {
 const addPost = async (req, res) => {
   try {
     const post = req.body;
-    const file = req.files.photoOrVideo;
+    let file = null;
+    if (req.files) {
+      file = req.files.photoOrVideo;
+    }
 
     let image = "";
     let video = "";

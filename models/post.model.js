@@ -40,7 +40,6 @@ const PostSchema = new Schema(
     },
     content: {
       type: String,
-      required: [true, "content cannot be empty"],
     },
     image: {
       type: String,
