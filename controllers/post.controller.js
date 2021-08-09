@@ -245,6 +245,31 @@ const commentPost = async (req, res) => {
   }
 };
 
+const deleteComment = async (req, res) => {
+  try {
+    const { commentId } = req.body;
+
+    let postToBeUpdated = await Post.findOne({ _id: req.postId });
+
+    postToBeUpdated.comments = postToBeUpdated.comments.filter(
+      (c) => String(c._id) !== commentId
+    );
+
+    let updatedPost = await postToBeUpdated.save();
+
+    updatedPost = await updatedPost
+      .populate("author comments.madeBy likes.likedBy", "-email -password -__v")
+      .execPopulate();
+
+    return successResponse(res, {
+      message: "Comment deleted successfully",
+      updatedPost,
+    });
+  } catch (error) {
+    return errorResponse(res, "Could not delete the comment", error);
+  }
+};
+
 module.exports = {
   getAllPosts,
   deleteAllPosts,
@@ -255,4 +280,5 @@ module.exports = {
   deletePost,
   likePost,
   commentPost,
+  deleteComment,
 };
