@@ -38,7 +38,7 @@ const userIdCheck = async (req, res, next, userId) => {
   try {
     const user = await User.findOne({ _id: userId })
       .populate(
-        "followers following notifications.from",
+        "followers following notifications.from notifications.post",
         "_id username firstname lastname profilePic followers following bio"
       )
       .select("-password  -__v");
@@ -186,7 +186,7 @@ const updateFollowers = async (req, res) => {
       let updatedUser = await user.save();
       updatedUser = await updatedUser
         .populate(
-          "followers following notifications.from",
+          "followers following notifications.from notifications.post",
           "_id username firstname lastname profilePic followers following bio"
         )
         .execPopulate();
@@ -197,7 +197,7 @@ const updateFollowers = async (req, res) => {
       let updatedLoggedInUser = await loggedInUser.save();
       updatedLoggedInUser = await updatedLoggedInUser
         .populate(
-          "followers following notifications.from",
+          "followers following notifications.from notifications.post",
           "_id username firstname lastname profilePic followers following bio"
         )
         .execPopulate();
@@ -219,7 +219,7 @@ const updateFollowers = async (req, res) => {
     let updatedUser = await user.save();
     updatedUser = await updatedUser
       .populate(
-        "followers following notifications.from",
+        "followers following notifications.from notifications.post",
         "_id username firstname lastname profilePic followers following bio"
       )
       .execPopulate();
@@ -230,7 +230,7 @@ const updateFollowers = async (req, res) => {
     let updatedLoggedInUser = await loggedInUser.save();
     updatedLoggedInUser = await updatedLoggedInUser
       .populate(
-        "followers following notifications.from",
+        "followers following notifications.from notifications.post",
         "_id username firstname lastname profilePic followers following bio"
       )
       .execPopulate();

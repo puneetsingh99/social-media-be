@@ -13,8 +13,8 @@ cloudinary.config({
 const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find({}).populate(
-      "author",
-      "-__v, -password -notifications -email"
+      "author comments.madeBy likes.likedBy",
+      "-email -password -__v"
     );
 
     return successResponse(res, {
@@ -91,7 +91,7 @@ const addPost = async (req, res) => {
     let savedPost = await newPost.save();
 
     savedPost = await savedPost
-      .populate("author", "-email -password -__v")
+      .populate("author comments.madeBy likes.likedBy", "-email -password -__v")
       .execPopulate();
 
     return successResponse(res, {
@@ -105,9 +105,10 @@ const addPost = async (req, res) => {
 
 const postIdCheck = async (req, res, next, postId) => {
   try {
-    const post = await Post.findOne({ _id: postId })
-      .populate("author likes.likedBy", "_id username")
-      .select("-__v");
+    const post = await Post.findOne({ _id: postId }).populate(
+      "author comments.madeBy likes.likedBy",
+      "-email -password -__v"
+    );
 
     if (!post) {
       return res
@@ -140,9 +141,10 @@ const updatePost = async (req, res) => {
 
     let postToBeUpdated = await Post.findOne({ _id: req.postId });
     postToBeUpdated = extend(postToBeUpdated, updateData);
-    const updatedPost = await postToBeUpdated.save();
-    updatedPost.__v = undefined;
-
+    let updatedPost = await postToBeUpdated.save();
+    updatedPost = await updatedPost
+      .populate("author comments.madeBy likes.likedBy", "-email -password -__v")
+      .execPopulate();
     return successResponse(res, {
       message: "Post updated successfully",
       updatedPost,
@@ -179,7 +181,10 @@ const likePost = async (req, res) => {
         (like) => String(like.likedBy) !== likedBy.likedBy
       );
       post.likes = updatedLikes;
-      await post.save();
+      let likes = await post.save();
+      likes = likes
+        .populate("likes.likedBy", "-email -password -__v")
+        .execPopulate();
       return successResponse(res, {
         message: "like removed from the post",
       });
@@ -194,7 +199,10 @@ const likePost = async (req, res) => {
     });
 
     post.likes.unshift(likedBy);
-    await post.save();
+    let likes = await await post.save();
+    likes = likes
+      .populate("likes.likedBy", "-email -password -__v")
+      .execPopulate();
     await user.save();
 
     return successResponse(res, {
@@ -221,11 +229,16 @@ const commentPost = async (req, res) => {
     });
 
     post.comments.unshift(comment);
-    await post.save();
+    let upadatedPost = await post.save();
+    upadatedPost = await upadatedPost
+      .populate("author comments.madeBy likes.likedBy", "-email -password -__v")
+      .execPopulate();
+
     await user.save();
 
     return successResponse(res, {
       message: "comment added to the post",
+      upadatedPost,
     });
   } catch (error) {
     return errorResponse(res, "could not add the comment", error);
