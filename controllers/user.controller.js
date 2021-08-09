@@ -371,8 +371,8 @@ const getPostsByUser = async (req, res) => {
   try {
     const userId = req.userId;
     const posts = await Post.find({ author: userId }).populate(
-      "author",
-      "-__v, -password -notifications -email"
+      "author comments.madeBy likes.likedBy",
+      "-email -password -__v"
     );
     return successResponse(res, {
       message: "Posts retrieved successfully",
