@@ -229,8 +229,8 @@ const commentPost = async (req, res) => {
     });
 
     post.comments.unshift(comment);
-    let upadatedPost = await post.save();
-    upadatedPost = await upadatedPost
+    let updatedPost = await post.save();
+    updatedPost = await updatedPost
       .populate("author comments.madeBy likes.likedBy", "-email -password -__v")
       .execPopulate();
 
@@ -238,7 +238,7 @@ const commentPost = async (req, res) => {
 
     return successResponse(res, {
       message: "comment added to the post",
-      upadatedPost,
+      updatedPost,
     });
   } catch (error) {
     return errorResponse(res, "could not add the comment", error);
