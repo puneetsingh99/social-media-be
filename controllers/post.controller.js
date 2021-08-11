@@ -183,7 +183,10 @@ const likePost = async (req, res) => {
       post.likes = updatedLikes;
       let updatedPost = await post.save();
       updatedPost = await updatedPost
-        .populate("likes.likedBy", "-email -password -__v")
+        .populate(
+          "author comments.madeBy likes.likedBy",
+          "-email -password -__v"
+        )
         .execPopulate();
       return successResponse(res, {
         message: "like removed from the post",
@@ -202,7 +205,7 @@ const likePost = async (req, res) => {
     post.likes.unshift(likedBy);
     let updatedPost = await post.save();
     updatedPost = await updatedPost
-      .populate("likes.likedBy", "-email -password -__v")
+      .populate("author comments.madeBy likes.likedBy", "-email -password -__v")
       .execPopulate();
     await user.save();
 
