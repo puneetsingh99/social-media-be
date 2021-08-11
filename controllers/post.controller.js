@@ -181,12 +181,13 @@ const likePost = async (req, res) => {
         (like) => String(like.likedBy) !== likedBy.likedBy
       );
       post.likes = updatedLikes;
-      let likes = await post.save();
-      likes = likes
+      let updatedPost = await post.save();
+      updatedPost = await updatedPost
         .populate("likes.likedBy", "-email -password -__v")
         .execPopulate();
       return successResponse(res, {
         message: "like removed from the post",
+        updatedPost,
       });
     }
 
@@ -199,14 +200,15 @@ const likePost = async (req, res) => {
     });
 
     post.likes.unshift(likedBy);
-    let likes = await await post.save();
-    likes = likes
+    let updatedPost = await post.save();
+    updatedPost = await updatedPost
       .populate("likes.likedBy", "-email -password -__v")
       .execPopulate();
     await user.save();
 
     return successResponse(res, {
       message: "like added to the post",
+      updatedPost,
     });
   } catch (error) {
     return errorResponse(res, "could not like the post", error);
